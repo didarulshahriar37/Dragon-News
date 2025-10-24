@@ -1,5 +1,5 @@
 // NewsCard.jsx
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import {
     FiBookmark,
     FiShare2,
@@ -8,6 +8,7 @@ import {
 import { AiFillEye } from "react-icons/ai";
 import { HiOutlineFire } from "react-icons/hi";
 import { MdToday } from "react-icons/md";
+import { Link } from "react-router";
 
 /**
  * @param {{ news: {
@@ -21,6 +22,7 @@ import { MdToday } from "react-icons/md";
  */
 const NewsCard = ({ news }) => {
     const {
+        id,
         title,
         rating = { number: 0, badge: "" },
         total_view = 0,
@@ -31,8 +33,6 @@ const NewsCard = ({ news }) => {
         tags = [],
         others = {},
     } = news || {};
-
-    const [expanded, setExpanded] = useState(false);
 
     const coverSrc = thumbnail_url || image_url;
     const dateText = useMemo(() => {
@@ -46,9 +46,6 @@ const NewsCard = ({ news }) => {
             return author?.published_date || "";
         }
     }, [author?.published_date]);
-
-    const shortText =
-        details.length > 260 ? details.slice(0, 260).trim() + "..." : details;
 
     const formatViews = (n) =>
         n >= 1_000_000 ? (n / 1_000_000).toFixed(1) + "M"
@@ -98,7 +95,7 @@ const NewsCard = ({ news }) => {
 
             {/* Title */}
             <div className="px-5 pt-3">
-                <h2 className="card-title leading-snug">{title}</h2>
+                <Link to={`/news-details/${id}`} className="card-title leading-snug hover:underline">{title}</Link>
             </div>
 
             {/* Image */}
@@ -113,22 +110,20 @@ const NewsCard = ({ news }) => {
             )}
 
             {/* Details */}
-            <div className="card-body pt-4">
-                <p className="text-base-content/80">
-                    {expanded ? details : shortText}
-                </p>
-                {details.length > 260 && (
-                    <button
-                        onClick={() => setExpanded((v) => !v)}
-                        className="link link-primary w-fit"
-                    >
-                        {expanded ? "Read less" : "Read more"}
-                    </button>
-                )}
+            <div className="text-accent pt-4 px-4">
+                {
+                    details.length > 200 ? (
+                        <>
+                            {details.slice(0, 200)}...
+                            <Link to={`/news-details/${id}`} className="text-primary font-semibold cursor-pointer hover:underline">Read More</Link>
+                        </>
+                    ) : (
+                        details
+                    )}
 
                 {/* Tags */}
                 {tags?.length > 0 && (
-                    <div className="mt-1 flex flex-wrap gap-2">
+                    <div className="mt-3 flex flex-wrap gap-2">
                         {tags.map((t, i) => (
                             <span key={i} className="badge badge-outline gap-1">
                                 <FiTag className="text-sm" />
