@@ -11,7 +11,7 @@ const Navbar = () => {
             alert("Logged Out Successfully");
         })
             .catch((error) => {
-                console.log(error)
+                // console.log(error)
             })
     }
 
